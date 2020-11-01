@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .item {
+        display: inline-block;
+        width: 50px;
+        height: 50px;
+        background-color: rgb(238, 243, 168);
+        border: 1px solid #fff;
+        vertical-align: middle;
+
+        text-align: center;
+        line-height: 50px;
+        font-size: 25px;
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="board"></div>
+  </body>
+  <script>
+    let arr = [
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    ];
+    let color = 1;
+
+    function show() {
+      let board = document.getElementById("board");
+
+      board.innerHTML = "";
+
+      for (let i = 0; i < 10; i++) {
+        for (let j = 0; j < 10; j++) {
+          let item = document.createElement("div");
+          item.classList.add("item");
+          item.innerText = arr[j][i] == 2 ? "X" : arr[j][i] == 1 ? "O" : "";
+          item.addEventListener("click", () => {
+            move(i, j);
+          });
+          board.appendChild(item);
+        }
+        board.appendChild(document.createElement("br"));
+      }
+    }
+
+    function move(n, m) {
+      // 为什么这个地方要交换m和n的值？？？
+      arr[m][n] = color;
+      if (check(arr, color, n, m)) {
+        alert(color == 2 ? "X 获胜！" : "O 获胜！");
+      }
+      color = 3 - color;
+      show();
+      // if (willWin(arr, color)) {
+      //   alert(color == 2 ? "X 获胜！" : "O 获胜！");
+      // }
+    }
+
+    // function check() {
+    //   for (let i = 0; i < 10; i++) {
+    //     let win = true;
+    //     for (let j = 0; j < 10; j++) {
+    //       if (arr[i][j] !== color) {
+    //         win = false;
+    //       }
+    //     }
+    //     if (win) return win;
+    //   }
+    // }
+
+    function check(arr, color, n, m) {
+      console.log(arr, color, n, m,'0000')
+      // 行胜利
+      for (let i = 0; i < 5; i++) {
+        let win = true;
+        for (let j = 0; j < 5; j++) {
+          // for(let k=n+j;k<10;k++){
+            if (arr[m][j] !== color) {
+            win = false;
+          // }
+
+          }
+          
+        }
+        if (win) return win;
+      }
+
+      for (let i = 0; i < 5; i++) {
+        let win = true;
+        for (let j = 0; j < 5; j++) {
+          if (arr[j][i] !== color) {
+            win = false;
+          }
+        }
+        if (win) return win;
+      }
+
+      {
+        let win = true;
+        for (let i = 0; i < 5; i++) {
+          if (arr[i][i] !== color) {
+            win = false;
+          }
+        }
+        if (win) {
+          return true;
+        }
+      }
+
+      {
+        let win = true;
+        for (let i = 0; i < 5; i++) {
+          if (arr[i][2 - i] !== color) {
+            win = false;
+          }
+        }
+        if (win) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    function clone(arr) {
+      return JSON.parse(JSON.stringify(arr));
+    }
+
+    function willWin(arr, color) {
+      for (let i = 0; i < 10; i++) {
+        for (let j = 0; j < 10; j++) {
+          if (arr[i][j]) continue;
+
+          let newArr = clone(arr);
+          newArr[i][j] = color;
+          if (check(newArr, color)) {
+            return true;
+          }
+        }
+      }
+
+      return false;
+    }
+
+    show(arr);
+  </script>
+</html>
