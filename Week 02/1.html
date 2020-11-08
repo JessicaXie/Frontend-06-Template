@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .cell {
+        display: inline-block;
+        width: 7px;
+        height: 7px;
+        line-height: 7px;
+        background-color: #ccc;
+        border-right: 1px solid #fff;
+        border-bottom: 1px solid #fff;
+        vertical-align: middle;
+      }
+      #container {
+        width: 800px;
+        font-size: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container"></div>
+    <button onclick="save()">保存</button>
+  </body>
+  <script>
+    class Sorted {
+      constructor(data, compare) {
+        this.data = data.slice();
+        this.compare = compare || ((a, b) => a - b);
+      }
+      take() {
+        if (!this.data.length) return;
+        let min = this.data[0];
+        let minIndex = 0;
+
+        for (let i = 1; i < this.data.length; i++) {
+          if (this.compare(this.data[i], min) < 0) {
+            min = this.data[i];
+            minIndex = i;
+          }
+        }
+
+        this.data[minIndex] = this.data[this.data.length - 1];
+        this.data.pop();
+        return min;
+      }
+
+      give(v) {
+        this.data.push(v);
+      }
+    }
+
+    let map = localStorage["map"]
+      ? JSON.parse(localStorage["map"])
+      : Array(10000).fill(0);
+    function save() {
+      localStorage["map"] = JSON.stringify(map);
+    }
+
+    let container = document.getElementById("container");
+    for (let i = 0; i < 100; i++) {
+      for (let j = 0; j < 100; j++) {
+        let cell = document.createElement("div");
+        cell.classList.add("cell");
+        // 数组中的标记为1时背景色变为黑色（即为墙）
+        if (map[100 * j + i] == 1) {
+          //一维数组来表示二维数组（同于特性）
+          cell.style.backgroundColor = "black";
+        }
+        // 监听移动事件，按下移动时变色，
+        cell.addEventListener("mousemove", () => {
+          if (mousedown) {
+            if (clear) {
+              cell.style.backgroundColor = "";
+              map[100 * j + i] = 0;
+            } else {
+              cell.style.backgroundColor = "black";
+              map[100 * j + i] = 1;
+            }
+          }
+        });
+        container.appendChild(cell);
+      }
+    }
+
+    let mousedown = false; // 鼠标键按下的标识
+    let clear = false; // 右键清除的标识
+    document.addEventListener("mousedown", (e) => {
+      mousedown = true;
+      clear = e.which === 3;
+    });
+    document.addEventListener("mouseup", (e) => {
+      mousedown = false;
+    });
+    document.addEventListener("contextmenu", (e) => {
+      e.preventDefault();
+    });
+
+    function sleep(t) {
+      return new Promise(function (resolve) {
+        setTimeout(resolve, t);
+      });
+    }
+
+    // 寻路算法
+    async function path(map, start, end) {
+      //   var queue = [start];
+      var table = Object.create(map);
+      let queue = new Sorted([start], (a, b) => {
+        distance(a) - distance(b);
+      });
+
+      async function insert(i, j, pre) {
+        if (i < 0 || i >= 100 || j < 0 || j >= 100) return; // 超出范围就不走了
+        if (table[j * 100 + i]) return; //墙就不走了
+
+        await sleep(5);
+        container.children[i * 100 + j].style.backgroundColor = "yellow"; // 给走过的格子标颜色
+        table[j * 100 + i] = pre;
+        queue.give([i, j]);
+      }
+
+      function distance(point) {
+        return (point[0] - end[0]) ** 2 + (point[1] - end[1]) ** 2;
+      }
+
+      while (queue.length) {
+          
+        // 走过的路径
+        // let [i, j] = queue.shift();
+        let [i, j] = queue.take();
+        // console.log(i, j);
+        if (i === end[0] && j === end[1]) {
+          let pathLine = [];
+          while (i != start[0] || j != start[1]) {
+            pathLine.push(map[j * 100 + j]);
+            [i, j] = table[j * 100 + i];
+            // await sleep(5);
+            // console.log(i, j);
+            container.children[i * 100 + j].style.backgroundColor = "lightgreen";
+          }
+          return pathLine;
+        }
+
+        // 当前点的四个方向的点
+        await insert(i - 1, j, [i, j]);
+        await insert(i + 1, j, [i, j]);
+        await insert(i, j - 1, [i, j]);
+        await insert(i, j + 1, [i, j]);
+        await insert(i - 1, j - 1, [i, j]);
+        await insert(i + 1, j - 1, [i, j]);
+        await insert(i - 1, j + 1, [i, j]);
+        await insert(i + 1, j + 1, [i, j]);
+      }
+      return null;
+    }
+  </script>
+</html>

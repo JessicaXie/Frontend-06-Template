@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>异步编程</title>
+    <style>
+      div {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: inline-block;
+
+        background-color: gray;
+      }
+      .red.light {
+        background-color: red;
+      }
+      .yellow.light {
+        background-color: yellow;
+      }
+      .green.light {
+        background-color: green;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="red"></div>
+    <div class="yellow"></div>
+    <div class="green"></div>
+  </body>
+  <script>
+    function green(){
+      var lights = document.getElementsByTagName('div');
+      console.log(lights,'00000')
+      for (let i = 0; i < 3; i++) {
+        document.getElementsByClassName("green")[0].classList.add('light')
+      }
+
+    }
+    green();
+    
+  </script>
+
+ 
+</html>
