@@ -4,36 +4,35 @@
 
 以下由高到低排列
 
-Memeber
+Memeber:
+    a.b
+    a[b]
+    foo string
+    super.b
+    super['b']
+    new.target
+    new Foo()
 
-a.b
-a[b]
-foo string
-super.b
-super['b']
-new.target
-new Foo()
 New
+    new Foo
+    Example: new a()() / new new a()
 
-new Foo
-Example: new a()() / new new a()
 Call 函数调用
+    foo()
+    super()
+    foo()['b']
+    foo().b
+    foo()abc
+    Example：new a()['b']
 
-foo()
-super()
-foo()['b']
-foo().b
-foo()abc
-Example：new a()['b']
 Left Handside & Right Handside
+    Example：a.b=c(Left Handside) a+b=c(Right Handside)
 
-Example：a.b=c(Left Handside) a+b=c(Right Handside)
 Update
-
-a++
-a--
---a
-++a
+    a++
+    a--
+    --a
+    ++a
 Example：++a++ ++(a++)
 Unary单目运算符
 
@@ -175,8 +174,3 @@ JS执行粒度（运行时）
 直接量/变量/this……
 事件循环，如何去使用JS引擎的过程，三个组成部分：
 
-获取代码
-把代码执行掉
-然后等待
-JS函数调用
-执行上下文栈
